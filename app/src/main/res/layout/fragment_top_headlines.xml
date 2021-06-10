@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rlSources"
+    android:id="@+id/rlTopHeadlines"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSources"
+            android:id="@+id/rvTopHeadlines"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"

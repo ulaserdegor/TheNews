@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_nav_graph"
+    app:startDestination="@id/mainFragment"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.ulaserdegor.thenews.ui.fragments.MainFragment"
+        android:label="The News">
+        <action
+            android:id="@+id/action_mainFragment_to_topHeadlinesFragment"
+            app:destination="@id/topHeadlinesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/topHeadlinesFragment"
+        android:name="com.ulaserdegor.thenews.ui.fragments.TopHeadlinesFragment"
+        android:label="Top Headlines">
+        <argument
+            android:name="country"
+            app:argType="string" />
+    </fragment>
+</navigation>
