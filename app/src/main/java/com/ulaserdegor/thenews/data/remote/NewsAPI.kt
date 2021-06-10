@@ -1,5 +1,6 @@
 package com.ulaserdegor.thenews.data.remote
 
+import com.ulaserdegor.thenews.data.models.NewsResponse
 import com.ulaserdegor.thenews.data.models.SourcesResponse
 import com.ulaserdegor.thenews.utils.Constants.Companion.API_KEY
 import retrofit2.Response
@@ -13,5 +14,15 @@ interface NewsAPI {
         @Query("apiKey")
         apiKey: String = API_KEY
     ): Response<SourcesResponse>
+
+    @GET("v2/top-headlines")
+    suspend fun getTopHeadlines(
+        @Query("country")
+        countryCode: String,
+        @Query("page")
+        page: Int,
+        @Query("apiKey")
+        apiKey: String = API_KEY
+    ): Response<NewsResponse>
 
 }

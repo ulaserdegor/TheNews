@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">The News</string>
+    <string name="app_name">Haber Kaynakları</string>
     <string name="updated">Güncellendi</string>
+    <string name="not_found_headlines">Kaynağa ait haber akışı bulunamadı!</string>
 </resources>

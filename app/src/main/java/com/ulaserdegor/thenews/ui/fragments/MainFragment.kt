@@ -29,6 +29,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         sourcesAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("country", it.country)
+                putSerializable("title", it.name)
             }
             findNavController().navigate(
                 R.id.action_mainFragment_to_topHeadlinesFragment,
@@ -36,13 +37,19 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             )
 
         }
-        refreshNews()
+        refreshSources()
     }
 
     private fun observeLiveData() {
         viewModel.apply {
-            newsLiveData.observe(viewLifecycleOwner, {
+            sourcesLiveData.observe(viewLifecycleOwner, {
+
+                if (sourcesAdapter.itemCount != 0) {
+                    Toast.makeText(activity, getString(R.string.updated), Toast.LENGTH_SHORT).show()
+                }
+
                 sourcesAdapter.differ.submitList(it)
+                rlSources.isRefreshing = false
             })
         }
     }
@@ -55,11 +62,10 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         }
     }
 
-    private fun refreshNews() {
+    private fun refreshSources() {
+        rlSources.isRefreshing = true
         rlSources.setOnRefreshListener {
             viewModel.getSources()
-            Toast.makeText(activity, getString(R.string.updated), Toast.LENGTH_SHORT).show()
-            rlSources.isRefreshing = false
         }
     }
 }
