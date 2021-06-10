@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ulaserdegor.thenews.R
 import com.ulaserdegor.thenews.ui.activities.MainActivity
 import com.ulaserdegor.thenews.ui.adapters.TopHeadlinesAdapter
@@ -23,6 +24,7 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines) {
 
     private val viewModel: MainViewModel by viewModels()
     private val args: TopHeadlinesFragmentArgs by navArgs()
+    private var selectedPage = 1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,9 +32,7 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines) {
         setUpRecyclerView()
         observeLiveData()
         topHeadLinesAdapter.setOnItemClickListener {
-
             openBrowser(it.url!!)
-
         }
 
         (activity as MainActivity).supportActionBar?.title = args.title
@@ -51,9 +51,8 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines) {
                 topHeadLinesAdapter.differ.submitList(it)
                 rlHeadlines.isRefreshing = false
 
-                if (it.isEmpty()) {
+                if (topHeadLinesAdapter.itemCount == 0) {
                     flipper.showNext()
-
                 }
             })
         }
@@ -65,6 +64,34 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines) {
             adapter = topHeadLinesAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+
+        setupListenerPostListScroll()
+    }
+
+    private fun setupListenerPostListScroll() {
+        val scrollDirectionDown = 1
+        var currentListSize = 0
+
+        rvHeadlines.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    if (!recyclerView.canScrollVertically(scrollDirectionDown)
+                        && newState == RecyclerView.SCROLL_STATE_IDLE
+                    ) {
+                        val listSizeAfterLoading = recyclerView.layoutManager!!.itemCount
+
+                        if (currentListSize != listSizeAfterLoading) {
+                            currentListSize = listSizeAfterLoading
+
+                            selectedPage++
+                            fillList()
+                        }
+                    }
+                }
+            })
     }
 
     private fun refreshHeadlines() {
@@ -75,7 +102,7 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines) {
 
     private fun fillList() {
         rlHeadlines.isRefreshing = true
-        viewModel.getTopHeadlines(args.country, 1)
+        viewModel.getTopHeadlines(args.id, selectedPage)
     }
 
     private fun openBrowser(url: String) {

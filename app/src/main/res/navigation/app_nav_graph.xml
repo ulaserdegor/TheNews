@@ -19,7 +19,7 @@
         android:name="com.ulaserdegor.thenews.ui.fragments.TopHeadlinesFragment"
         android:label="Top Headlines">
         <argument
-            android:name="country"
+            android:name="id"
             app:argType="string" />
         <argument
             android:name="title"

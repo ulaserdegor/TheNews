@@ -28,7 +28,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         observeLiveData()
         sourcesAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
-                putSerializable("country", it.country)
+                putSerializable("id", it.id)
                 putSerializable("title", it.name)
             }
             findNavController().navigate(

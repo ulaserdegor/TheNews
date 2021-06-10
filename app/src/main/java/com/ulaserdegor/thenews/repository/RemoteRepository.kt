@@ -17,9 +17,9 @@ class RemoteRepository @Inject constructor(
     }
 
 
-    suspend fun getTopHeadlines(country: String, page: Int): MutableList<NewsEntity>? {
+    suspend fun getTopHeadlines(pageSize: String, page: Int): MutableList<NewsEntity>? {
         return safeApiCall(
-            call = { newsApi.getTopHeadlines(country, page) },
+            call = { newsApi.getTopHeadlines(pageSize, page * 20) },
             error = "Kaynağa ait haber listesi çekilirken hata oluştu"
         )?.articles?.toMutableList()
     }

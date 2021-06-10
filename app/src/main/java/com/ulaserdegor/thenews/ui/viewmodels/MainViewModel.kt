@@ -29,8 +29,8 @@ class MainViewModel @Inject constructor(
         sourcesLiveData.postValue(sources)
     }
 
-    fun getTopHeadlines(country: String, page: Int? = 1) = viewModelScope.launch {
-        val topHeadlines = remoteRepository.getTopHeadlines(country, page!!)
+    fun getTopHeadlines(pageSize: String, page: Int? = 1) = viewModelScope.launch {
+        val topHeadlines = remoteRepository.getTopHeadlines(pageSize, page!!)
         topHeadlinesLiveData.postValue(topHeadlines)
     }
 
