@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Haber Kaynakları</string>
+    <string name="app_name">Haberler</string>
     <string name="updated">Yeni Haberler Eklendi</string>
     <string name="not_found_headlines">Kaynağa ait haber akışı bulunamadı!</string>
     <string name="search">Ara</string>
