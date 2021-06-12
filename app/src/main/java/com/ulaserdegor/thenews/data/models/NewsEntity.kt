@@ -13,8 +13,9 @@ data class NewsEntity(
     val content: String?,
     val description: String?,
     val publishedAt: String?,
-    //val sourcesResponse: SourcesResponse?,
+    val source: SourceModel?,
     val title: String?,
     val url: String?,
-    val urlToImage: String?
+    val urlToImage: String?,
+    var isFavorited: Boolean? = false
 ) : Serializable

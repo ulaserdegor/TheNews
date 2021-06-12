@@ -1,10 +1,13 @@
 package com.ulaserdegor.thenews.data.local
 
+import androidx.room.TypeConverter
+import com.ulaserdegor.thenews.data.models.SourceModel
+
 class Converters {
-/*
-    @TypeConverter
-    fun fromSource(source: SourcesResponse) = source
 
     @TypeConverter
-    fun toSource(name: String, description: String) = SourceModel(name, name, description)*/
+    fun fromSource(source: SourceModel) = source.name
+
+    @TypeConverter
+    fun toSource(name: String) = SourceModel(name, name, "")
 }

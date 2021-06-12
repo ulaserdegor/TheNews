@@ -21,7 +21,7 @@ object DatabaseModule {
     ) = Room.databaseBuilder(
         app,
         TheNewsDB::class.java,
-        "the_news_db"
+        "the_news_db.db"
     ).build()
 
     @Singleton

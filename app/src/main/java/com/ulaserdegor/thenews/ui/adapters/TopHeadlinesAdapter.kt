@@ -37,7 +37,11 @@ class TopHeadlinesAdapter : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlinesVi
     }
 
     val differ = AsyncListDiffer(this, differCallBack)
-    private var onItemClickListener: ((NewsEntity) -> Unit)? = null
+    var savedNews = listOf<NewsEntity>()
+
+    companion object {
+        var onItemClickListener: NewsItemClickListener? = null
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         HeadlinesViewHolder(
@@ -61,24 +65,37 @@ class TopHeadlinesAdapter : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlinesVi
                 tvHeadlineTitle.text = it.title
                 tvHeadlineDescription.text = it.description
 
-                // TODO: 10.06.2021 buton eventleri db kısmında yapılacak
-                if (3 == 3) {
-                    btnHeadlineFavorite.text = "Okuma Listeme Ekle"
+                //db de ki filtrelemeyi title a göre yaptım. çünkü apiden gelen response da unique bi id yok.
+                if (!savedNews.isNullOrEmpty()) {
+                    it.isFavorited = savedNews.map { x -> x.title }.contains(it.title)
                 } else {
-                    btnHeadlineFavorite.text = "Okuma Listemden Çıkar"
+                    it.isFavorited = false
+                }
+                if (it.isFavorited!!) {
+                    btnHeadlineFavorite.text = context.getString(R.string.remove_favorite)
+                } else {
+                    btnHeadlineFavorite.text = context.getString(R.string.add_favorite)
                 }
 
                 setOnClickListener {
-                    onItemClickListener?.let {
-                        it(headline)
-                    }
+                    onItemClickListener?.itemClicked(headline)
+                }
+
+                btnHeadlineFavorite.setOnClickListener {
+                    onItemClickListener?.itemFavoriteClicked(headline)
                 }
             }
         }
     }
 
-    fun setOnItemClickListener(listener: (NewsEntity) -> Unit) {
+    fun setOnItemClickListener(listener: NewsItemClickListener) {
         onItemClickListener = listener
+    }
+
+    interface NewsItemClickListener {
+
+        fun itemClicked(newsEntity: NewsEntity)
+        fun itemFavoriteClicked(newsEntity: NewsEntity)
     }
 
     class HeadlinesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
