@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.item_row_news.view.*
 
 class TopHeadlinesAdapter : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlinesViewHolder>() {
 
-    var glideOptions: RequestOptions = RequestOptions()
+    private var glideOptions: RequestOptions = RequestOptions()
         .centerCrop()
         .placeholder(R.drawable.progress_animation)
         .error(R.drawable.null_img)
@@ -37,7 +37,7 @@ class TopHeadlinesAdapter : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlinesVi
     }
 
     val differ = AsyncListDiffer(this, differCallBack)
-    var savedNews = listOf<NewsEntity>()
+    private var savedNews = listOf<NewsEntity>()
 
     companion object {
         var onItemClickListener: NewsItemClickListener? = null
@@ -81,11 +81,19 @@ class TopHeadlinesAdapter : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlinesVi
                     onItemClickListener?.itemClicked(headline)
                 }
 
-                btnHeadlineFavorite.setOnClickListener {
-                    onItemClickListener?.itemFavoriteClicked(headline)
+                btnHeadlineFavorite.setOnClickListener { _ ->
+
+                    onItemClickListener?.itemFavoriteClicked(headline, it.isFavorited!!)
+                    /* differ.currentList.get(headline!).isFavorited!! = !headline.isFavorited!!
+                     notifyDataSetChanged()*/
                 }
             }
         }
+    }
+
+    fun updateSavedList(list: List<NewsEntity>) {
+        savedNews = list
+        notifyDataSetChanged()
     }
 
     fun setOnItemClickListener(listener: NewsItemClickListener) {
@@ -95,7 +103,7 @@ class TopHeadlinesAdapter : RecyclerView.Adapter<TopHeadlinesAdapter.HeadlinesVi
     interface NewsItemClickListener {
 
         fun itemClicked(newsEntity: NewsEntity)
-        fun itemFavoriteClicked(newsEntity: NewsEntity)
+        fun itemFavoriteClicked(newsEntity: NewsEntity, isFavorited: Boolean)
     }
 
     class HeadlinesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

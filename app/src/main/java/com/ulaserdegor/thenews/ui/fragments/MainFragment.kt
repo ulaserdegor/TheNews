@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.main_fragment.*
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.main_fragment) {
 
-    lateinit var sourcesAdapter: SourcesAdapter
+    private lateinit var sourcesAdapter: SourcesAdapter
 
     private val viewModel: MainViewModel by viewModels()
 

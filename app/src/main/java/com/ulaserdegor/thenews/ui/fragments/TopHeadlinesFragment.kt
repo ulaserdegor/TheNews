@@ -19,7 +19,6 @@ import com.ulaserdegor.thenews.ui.activities.MainActivity
 import com.ulaserdegor.thenews.ui.adapters.TopHeadlinesAdapter
 import com.ulaserdegor.thenews.ui.viewmodels.MainViewModel
 import com.ulaserdegor.thenews.utils.Constants.Companion.PULL_NEWS_DELAY
-import com.ulaserdegor.thenews.utils.dateIsSame
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_top_headlines.*
 import kotlinx.coroutines.*
@@ -29,7 +28,7 @@ import java.util.*
 class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines),
     TopHeadlinesAdapter.NewsItemClickListener {
 
-    lateinit var topHeadLinesAdapter: TopHeadlinesAdapter
+    private lateinit var topHeadLinesAdapter: TopHeadlinesAdapter
 
     private val viewModel: MainViewModel by viewModels()
     private val args: TopHeadlinesFragmentArgs by navArgs()
@@ -50,8 +49,7 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines),
         }
     }
 
-    private var latestUpdateTime = ""
-
+    private var latestTitle = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,9 +61,6 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines),
 
         refreshHeadlines()
         initSearchHeadlines()
-
-        getSavedNews()
-        //fillList()
 
         rlHeadlines.isRefreshing = true
         mainHandler = Handler(Looper.getMainLooper())
@@ -89,14 +84,19 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines),
                 topHeadLinesAdapter.differ.submitList(it)
                 rlHeadlines.isRefreshing = false
 
-                if (latestUpdateTime.isNotEmpty()) {
+                if (latestTitle.isNotEmpty()) {
 
                     //apiden yeniden eskiye tarih sıralı gelen cevaplardan ilkini en son tutulan tarih ile karşılaştırdım.
-                    // ğer aynı değil ise farklı bir değer gelmiş demektir ve uyarı gösterilir
-                    if (!dateIsSame(
-                            latestUpdateTime,
-                            topHeadLinesAdapter.differ.currentList.first().publishedAt.toString()
-                        )
+                    //eğer aynı değil ise farklı bir değer gelmiş demektir ve uyarı gösterilir
+                    //yoruma alma sebebim yukarıdaki mantık bazı haber kaynaklarının tarih formatları da farklı. örn; abc-news ile bbc-news
+                    /*  if (!dateIsSame(
+                              latestUpdateTime,
+                              topHeadLinesAdapter.differ.currentList.first().publishedAt.toString()
+                          )
+                      )*/
+
+                    //en son gelen yani listenin başında gelen başlık farklı ise öncekinden güncellendi demektir
+                    if (latestTitle == topHeadLinesAdapter.differ.currentList.first().title.toString()
                     ) {
                         Toast.makeText(activity, getString(R.string.updated), Toast.LENGTH_SHORT)
                             .show()
@@ -104,23 +104,8 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines),
 
                 }
 
-                latestUpdateTime =
+                latestTitle =
                     topHeadLinesAdapter.differ.currentList.first().publishedAt.toString()
-/*
-
-
-
-                if (topHeadLinesAdapter.differ.currentList != it && etSearch.text.isNullOrEmpty()) {
-                    Toast.makeText(activity, getString(R.string.updated), Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Log.i(
-                        "Güncel Haber Yok", "Yeni haber verisi olmadığı için güncellendi" +
-                                " yazmadı. Test ederken genelde apiden 20 nin altında veri olduğu için bu log'u yazmak zorunda kaldım." +
-                                "Constants dosyasına gidip PULL_NEWS_COUNT değerini azaltarak bunu deneyebilirsiniz."
-                    )
-                }*/
-
 
                 if (topHeadLinesAdapter.itemCount == 0) {
                     tvEmptyView.visibility = View.VISIBLE
@@ -201,22 +186,20 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines),
         openBrowser(newsEntity.url!!)
     }
 
-    override fun itemFavoriteClicked(newsEntity: NewsEntity) {
+    override fun itemFavoriteClicked(newsEntity: NewsEntity, isFavorited: Boolean) {
         if (newsEntity.isFavorited!!) {
-            viewModel.deleteNews(newsEntity)
+            //listeyi apiden gelen cevaba göre doldurduğum için direkt delete metodunu kullanmadım. çünkü apiden gelen cevapda id yok,
+            //db de ki modelde ise var. birebir model olmadığı için delete metodu işlemedi.
+            viewModel.deleteNewsWithTitle(newsEntity)
         } else {
             viewModel.saveNews(newsEntity)
         }
-
-        topHeadLinesAdapter.notifyDataSetChanged()
     }
 
     private fun getSavedNews() {
 
         viewModel.getSavedNews().observe(viewLifecycleOwner, {
-
-            topHeadLinesAdapter.savedNews = it
-            topHeadLinesAdapter.notifyDataSetChanged()
+            topHeadLinesAdapter.updateSavedList(it)
         })
     }
 

@@ -1,7 +1,10 @@
 package com.ulaserdegor.thenews.data.local
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.ulaserdegor.thenews.data.models.NewsEntity
 
 @Dao
@@ -13,6 +16,7 @@ interface SavedNewsDao {
     @Query("SELECT * FROM saved_news")
     fun getSavedNews(): LiveData<List<NewsEntity>>
 
-    @Delete
-    suspend fun deleteNews(news: NewsEntity)
+    @Query("DELETE FROM saved_news WHERE title = :title")
+    fun deleteNewsWithTitle(title: String)
+
 }

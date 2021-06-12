@@ -22,7 +22,7 @@ object DatabaseModule {
         app,
         TheNewsDB::class.java,
         "the_news_db.db"
-    ).build()
+    ).allowMainThreadQueries().build()
 
     @Singleton
     @Provides

@@ -1,5 +1,6 @@
 package com.ulaserdegor.thenews.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,6 +33,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getTopHeadlines(pageSize: String, page: Int? = 1) = viewModelScope.launch {
+        Log.e("ulas", "apiye gitti")
         val topHeadlines = remoteRepository.getTopHeadlines(pageSize, page!!)
         topHeadlinesLiveData.postValue(topHeadlines)
         topHeadlinesLiveDataHolder.postValue(topHeadlines)
@@ -55,11 +57,12 @@ class MainViewModel @Inject constructor(
 
 
     fun saveNews(newsEntity: NewsEntity) = viewModelScope.launch {
+        newsEntity.isFavorited = true
         localeRepository.insertNewsToDb(newsEntity)
     }
 
-    fun deleteNews(newsEntity: NewsEntity) = viewModelScope.launch {
-        localeRepository.deleteNews(newsEntity)
+    fun deleteNewsWithTitle(newsEntity: NewsEntity) = viewModelScope.launch {
+        localeRepository.deleteNewsWithTitle(newsEntity)
     }
 
     fun getSavedNews() = localeRepository.getSavedNews()

@@ -10,7 +10,7 @@ class LocaleRepository @Inject constructor(
 
     suspend fun insertNewsToDb(news: NewsEntity) = db.insertNews(news)
 
-    suspend fun deleteNews(news: NewsEntity) = db.deleteNews(news)
+    fun deleteNewsWithTitle(news: NewsEntity) = db.deleteNewsWithTitle(news.title!!)
 
     fun getSavedNews() = db.getSavedNews()
 }
